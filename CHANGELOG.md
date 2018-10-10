@@ -1,3 +1,95 @@
+# Change Log
+
+<a name="0.11.0"></a>
+## [0.11.0](https://github.com/awslabs/aws-cdk/compare/v0.10.0...v0.11.0) (2018-10-10)
+
+This release includes a breaking change in the toolkit<=>app protocol. This means that
+in order to synthesize CDK apps that use this version, the globally installed CDK toolkit
+must also be updated:
+
+```shell
+$ npm i -g aws-cdk
+$ cdk --version
+0.11.0 (build ...)
+```
+
+You will also need to update your project's library versions:
+
+|Language|Update?|
+|--------|-------|
+|JavaScript/TypeScript (npm)|[`npx npm-check-updates -u`](https://www.npmjs.com/package/npm-check-updates)|
+|Java (maven)|[`mvn versions:use-latest-versions`](https://www.mojohaus.org/versions-maven-plugin/use-latest-versions-mojo.html)
+|.NET (NuGet)|[`nuget update`](https://docs.microsoft.com/en-us/nuget/tools/cli-ref-update)
+
+
+### BREAKING CHANGES
+
+* The `cdk.App` initializer doesn't accept any arguments and the `app.run()`
+  method does not return a `string` anymore. All AWS CDK apps in all languages
+  would need to be modified to adhere to the new API of the `cdk.App` construct.
+
+    Instead of:
+
+      const app = new App(process.argv); // ERROR
+      // add stacks
+      process.stdout.write(app.run());   // ERROR
+
+    The new usage is:
+
+      const app = new App();
+      // add stacks
+      app.run();
+
+    In order to interact with applications written using this
+    version, the CDK Toolkit must also be update using:
+
+      $ npm i -g aws-cdk
+
+* **aws-iam:** This change moves the `PolicyDocument`, `PolicyStatement` and
+all `PolicyPrincipal` classes from the @aws-cdk/cdk module
+and into the @aws-cdk/aws-iam module.
+* **jsx:** The CDK is no longer shipped with built-in support for JSX.
+You can still use JSX but you will have to manually configure it.
+
+### Features
+
+* **aws-apigateway:** "LambdaRestApi" and "addProxy" routes ([#867](https://github.com/awslabs/aws-cdk/issues/867)) ([a733bd1](https://github.com/awslabs/aws-cdk/commit/a733bd1))
+* **aws-cdk:** add maven wrapper to java template ([#811](https://github.com/awslabs/aws-cdk/issues/811)) ([1ee729e](https://github.com/awslabs/aws-cdk/commit/1ee729e))
+* **aws-cloudfront:** Support Security Policy ([#804](https://github.com/awslabs/aws-cdk/issues/804)) ([d69b1d6](https://github.com/awslabs/aws-cdk/commit/d69b1d6)), closes [#795](https://github.com/awslabs/aws-cdk/issues/795)
+* **aws-codedeploy:** support setting a load balancer on a Deployment Group. ([#786](https://github.com/awslabs/aws-cdk/issues/786)) ([dc0af46](https://github.com/awslabs/aws-cdk/commit/dc0af46))
+* **aws-codepipeline:** allow specifying the runOrder property when creating Actions. ([#776](https://github.com/awslabs/aws-cdk/issues/776)) ([8302541](https://github.com/awslabs/aws-cdk/commit/8302541))
+* **aws-dynamodb:** IAM grants support ([#870](https://github.com/awslabs/aws-cdk/issues/870)) ([f6c7760](https://github.com/awslabs/aws-cdk/commit/f6c7760))
+* **aws-dynamodb:** support Global Secondary Indexes ([#760](https://github.com/awslabs/aws-cdk/issues/760)) ([737b481](https://github.com/awslabs/aws-cdk/commit/737b481))
+* **aws-dynamodb:** tags support ([#814](https://github.com/awslabs/aws-cdk/issues/814)) ([c76d8c1](https://github.com/awslabs/aws-cdk/commit/c76d8c1))
+* **aws-dynamodB:** support Local Secondary Indexes ([#825](https://github.com/awslabs/aws-cdk/issues/825)) ([fdb4974](https://github.com/awslabs/aws-cdk/commit/fdb4974))
+* Manage IAM permissions for (some) CFN CodePipeline actions ([#843](https://github.com/awslabs/aws-cdk/issues/843)) ([5f2cb9f](https://github.com/awslabs/aws-cdk/commit/5f2cb9f))
+* Resolve paths to nyc & nodeunit ([#887](https://github.com/awslabs/aws-cdk/issues/887)) ([6d71a87](https://github.com/awslabs/aws-cdk/commit/6d71a87))
+* upgrade to jsii v0.7.7 ([43d2d9e](https://github.com/awslabs/aws-cdk/commit/43d2d9e))
+* **aws-ec2:** allow configuring subnets for NAT gateway ([#874](https://github.com/awslabs/aws-cdk/issues/874)) ([958dce6](https://github.com/awslabs/aws-cdk/commit/958dce6))
+* **aws-ec2:** support UDP port ranges in SecurityGroups ([#835](https://github.com/awslabs/aws-cdk/issues/835)) ([6920b9c](https://github.com/awslabs/aws-cdk/commit/6920b9c))
+* **aws-s3:** support granting public access to objects ([#886](https://github.com/awslabs/aws-cdk/issues/886)) ([50e0c41](https://github.com/awslabs/aws-cdk/commit/50e0c41)), closes [#877](https://github.com/awslabs/aws-cdk/issues/877)
+* **cdk:** Add support for UseOnlineResharding with UpdatePolicies ([#881](https://github.com/awslabs/aws-cdk/issues/881)) ([a95f081](https://github.com/awslabs/aws-cdk/commit/a95f081))
+
+### Bug Fixes
+
+* **aws-apigateway:** allow + in path parts ([#769](https://github.com/awslabs/aws-cdk/issues/769)) ([6905b7e](https://github.com/awslabs/aws-cdk/commit/6905b7e)), closes [#768](https://github.com/awslabs/aws-cdk/issues/768)
+* **aws-cdk:** continue after exceptions in stack monitor ([#791](https://github.com/awslabs/aws-cdk/issues/791)) ([b7c244f](https://github.com/awslabs/aws-cdk/commit/b7c244f)), closes [#787](https://github.com/awslabs/aws-cdk/issues/787)
+* **aws-cloudfront:** properly support loggingConfig ([#809](https://github.com/awslabs/aws-cdk/issues/809)) ([d279a1d](https://github.com/awslabs/aws-cdk/commit/d279a1d)), closes [#721](https://github.com/awslabs/aws-cdk/issues/721)
+* **aws-ec2:** Add Burstable Generation 3 Instances ([#812](https://github.com/awslabs/aws-cdk/issues/812)) ([cf62e9d](https://github.com/awslabs/aws-cdk/commit/cf62e9d))
+* **aws-s3:** properly export bucketDomainName ([#844](https://github.com/awslabs/aws-cdk/issues/844)) ([9a53069](https://github.com/awslabs/aws-cdk/commit/9a53069))
+* Emit valid YAML-1.1 ([#876](https://github.com/awslabs/aws-cdk/issues/876)) ([6c98b73](https://github.com/awslabs/aws-cdk/commit/6c98b73)), closes [#875](https://github.com/awslabs/aws-cdk/issues/875)
+* **aws-sqs:** Queue.import() doesn't return a value ([#885](https://github.com/awslabs/aws-cdk/issues/885)) ([c38c3e7](https://github.com/awslabs/aws-cdk/commit/c38c3e7)), closes [#879](https://github.com/awslabs/aws-cdk/issues/879)
+* **cdk:** fix TagManager to evaluate to undefined if no tags are included ([#882](https://github.com/awslabs/aws-cdk/issues/882)) ([be65a04](https://github.com/awslabs/aws-cdk/commit/be65a04))
+* **cdk:** jsx support conflicts with React usage ([#884](https://github.com/awslabs/aws-cdk/issues/884)) ([2a979cc](https://github.com/awslabs/aws-cdk/commit/2a979cc)), closes [#830](https://github.com/awslabs/aws-cdk/issues/830)
+* **docs:** update supported languages in README ([#819](https://github.com/awslabs/aws-cdk/issues/819), [#450](https://github.com/awslabs/aws-cdk/issues/450)) ([#820](https://github.com/awslabs/aws-cdk/issues/820)) ([1ec443e](https://github.com/awslabs/aws-cdk/commit/1ec443e))
+
+
+### Code Refactoring
+
+* **aws-iam:** move IAM classes cdk to aws-iam ([#866](https://github.com/awslabs/aws-cdk/issues/866)) ([6c58556](https://github.com/awslabs/aws-cdk/commit/6c58556)), closes [#196](https://github.com/awslabs/aws-cdk/issues/196)
+* remove app boilerplate and improvements to cx protocol ([#868](https://github.com/awslabs/aws-cdk/issues/868)) ([7bb5a60](https://github.com/awslabs/aws-cdk/commit/7bb5a60)), closes [#216](https://github.com/awslabs/aws-cdk/issues/216)
+
+
 <a name="0.10.0"></a>
 ## [0.10.0](https://github.com/awslabs/aws-cdk/compare/v0.9.2...v0.10.0) (2018-09-27)
 
